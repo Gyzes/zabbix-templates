@@ -43,13 +43,13 @@ else:
     sys.exit()
 
 if args.method == 'time':
-    oid = '.1.3.6.1.4.1.9.9.171.1.2.2.1.8.1.4.194.84.250.77.9.24.'
+    oid = '.1.3.6.1.4.1.9.9.171.1.2.2.1.8.1.4.12.13.14.15.9.24.'
     oid += ".".join([str(ord(x)) for x in args.remote]) + "." + str(args.snmpindex)
     reply = subprocess.check_output([str(get_command(oid))], shell=True)
     print(int(reply))
 
 elif args.method == 'tunaddress':
-    oid_remote = '.1.3.6.1.4.1.9.9.171.1.2.2.1.7.1.4.194.84.250.77.9.24.'
+    oid_remote = '.1.3.6.1.4.1.9.9.171.1.2.2.1.7.1.4.12.13.14.15.9.24.'
     oid_remote += ".".join([str(ord(x)) for x in args.remote]) + "." + str(args.snmpindex)
     remote_address = str(subprocess.check_output([str(get_command(oid_remote))], shell=True))[3:-5]
 

@@ -1,4 +1,4 @@
-$OU = "ou=servicedesks,ou=_services,ou=_accounts,ou=_it,ou=open,dc=open-com,dc=ru"
+$OU = "ou=servicedesks,ou=_services,ou=_accounts,ou=_it,ou=open,dc=example,dc=com"
 
 #Add Exchange management shell
 $SnapinName = "Microsoft.Exchange.Management.PowerShell.SnapIn"
