@@ -1,0 +1,124 @@
+zabbix_export:
+  version: '5.4'
+  date: '2021-06-15T05:10:49Z'
+  groups:
+    -
+      uuid: ea52c36203c5499cbce2442d531b1a22
+      name: SSL
+  templates:
+    -
+      uuid: b7e4889232cc4c209031b0ffab93327f
+      template: 'Certs for banks'
+      name: 'Certs for banks'
+      description: 'Скрипт парсит статью в confluence и сообщает о сроке сертификата'
+      groups:
+        -
+          name: SSL
+      discovery_rules:
+        -
+          uuid: 862c454a430f4bf984b18d767641701c
+          name: 'Certs discovery'
+          type: EXTERNAL
+          key: 'certs_check.py[--url,{$URL},--username,{$USERNAME},--password,{$PASSWORD},--pageid,{$PAGEID}]'
+          delay: 1d
+          item_prototypes:
+            -
+              uuid: 87f6e934f9844f74a7655118aba8764d
+              name: '{#NAME} cert timeleft'
+              type: CALCULATED
+              key: 'cert.timeleft[{#ROW}]'
+              delay: 1h
+              units: s
+              params: 'last(//certs.date[{#ROW}]) - last(/Zabbix server/system.localtime)'
+              trigger_prototypes:
+                -
+                  uuid: 50c24bfeb5c54ba8b59360fa3b0028d2
+                  expression: 'last(/Certs for banks/cert.timeleft[{#ROW}])<=5d'
+                  name: '{#NAME} certificate expires in 5 days'
+                  priority: HIGH
+                -
+                  uuid: 676bbec4315e4505b91105c0c9e5a4df
+                  expression: 'last(/Certs for banks/cert.timeleft[{#ROW}])<=2w'
+                  name: '{#NAME} certificate expires in 14 days'
+                  priority: AVERAGE
+                  dependencies:
+                    -
+                      name: '{#NAME} certificate expires in 5 days'
+                      expression: 'last(/Certs for banks/cert.timeleft[{#ROW}])<=5d'
+            -
+              uuid: db291818d01a46b89259dd59a94bb458
+              name: '{#NAME} expire date'
+              type: DEPENDENT
+              key: 'certs.date[{#ROW}]'
+              delay: '0'
+              units: unixtime
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.DATE
+              master_item:
+                key: 'certs_check.py[--url,{$URL},--username,{$USERNAME},--password,{$PASSWORD},--pageid,{$PAGEID},--row,{#ROW}]'
+            -
+              uuid: 3e62def8a1be4fb89ac8458d102b22c1
+              name: '{#NAME} ФИО директора'
+              type: DEPENDENT
+              key: 'certs.fio[{#ROW}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.FIO
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'certs_check.py[--url,{$URL},--username,{$USERNAME},--password,{$PASSWORD},--pageid,{$PAGEID},--row,{#ROW}]'
+            -
+              uuid: 116b9bd3215246a095a618bab7f1954b
+              name: '{#NAME} phone'
+              type: DEPENDENT
+              key: 'certs.phone[{#ROW}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.PHONE
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'certs_check.py[--url,{$URL},--username,{$USERNAME},--password,{$PASSWORD},--pageid,{$PAGEID},--row,{#ROW}]'
+            -
+              uuid: 3b86fd83bd8546b5bada7819ea6a98fc
+              name: '{#NAME} raw data'
+              type: EXTERNAL
+              key: 'certs_check.py[--url,{$URL},--username,{$USERNAME},--password,{$PASSWORD},--pageid,{$PAGEID},--row,{#ROW}]'
+              delay: 1h
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: 'raw data'
+      macros:
+        -
+          macro: '{$PAGEID}'
+          value: '12345'
+        -
+          macro: '{$PASSWORD}'
+          value: password
+        -
+          macro: '{$URL}'
+          value: 'https://confluence.example.com'
+        -
+          macro: '{$USERNAME}'
+          value: username

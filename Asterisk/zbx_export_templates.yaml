@@ -1,0 +1,79 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-04-21T06:41:36Z'
+  groups:
+    -
+      name: ATC
+  templates:
+    -
+      template: 'Template App Asterisk Service'
+      name: 'Template App Asterisk Service'
+      groups:
+        -
+          name: ATC
+      applications:
+        -
+          name: IAX2
+        -
+          name: SIP
+      discovery_rules:
+        -
+          name: 'Asterisk trunks IP'
+          key: 'asterisk_trunk_discovery[ips]'
+          delay: 1h
+          item_prototypes:
+            -
+              name: 'Asterisk Ping Trunk IP {#TRUNKIP}'
+              type: SIMPLE
+              key: 'icmpping[{#TRUNKIP},1]'
+              delay: 30s
+        -
+          name: 'Asterisk trunks IAX2'
+          key: 'asterisk_trunk_discovery[trunks_iax]'
+          delay: 1h
+          item_prototypes:
+            -
+              name: 'IAX2 Trunk {#TRUNKNAME}'
+              key: 'asterisk_trunk_discovery[registration_monitoring_iax {#TRUNKNAME}]'
+              applications:
+                -
+                  name: IAX2
+              valuemap:
+                name: 'Service state'
+              trigger_prototypes:
+                -
+                  expression: '{last()}=0'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: '{min(#6)}=1'
+                  name: 'IAX2 Trunk {#TRUNKNAME}'
+                  priority: HIGH
+        -
+          name: 'Asterisk trunks SIP'
+          key: 'asterisk_trunk_discovery[trunks_sip]'
+          delay: 1h
+          item_prototypes:
+            -
+              name: 'SIP Trunk {#TRUNKNAME}'
+              key: 'asterisk_trunk_discovery[registration_monitoring_sip {#TRUNKNAME}]'
+              applications:
+                -
+                  name: SIP
+              valuemap:
+                name: 'Service state'
+              trigger_prototypes:
+                -
+                  expression: '{last()}=0'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: '{min(#6)}=1'
+                  name: 'SIP Trunk {#TRUNKNAME}'
+                  priority: HIGH
+  value_maps:
+    -
+      name: 'Service state'
+      mappings:
+        -
+          value: '0'
+          newvalue: Down
+        -
+          value: '1'
+          newvalue: Up

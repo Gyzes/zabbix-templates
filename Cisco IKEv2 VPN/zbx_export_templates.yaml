@@ -1,0 +1,162 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-04-21T08:00:36Z'
+  groups:
+    -
+      name: 'Templates SNMP Devices'
+  templates:
+    -
+      template: 'Cisco IPsec RA VPN discovering'
+      name: 'Cisco IPsec RA VPN discovering'
+      groups:
+        -
+          name: 'Templates SNMP Devices'
+      applications:
+        -
+          name: 'IPsec VPN items'
+      discovery_rules:
+        -
+          name: 'VPN Tunnels'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#LOCAL},CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunLocalValue,{#REMOTE},CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunRemoteValue]'
+          key: cikeTunActiveTime
+          delay: 2m
+          filter:
+            conditions:
+              -
+                macro: '{#REMOTE}'
+                value: cn=.+
+                formulaid: A
+          lifetime: 3d
+          item_prototypes:
+            -
+              name: 'Active time of  tunnel {#REMOTE}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunActiveTime.{#SNMPINDEX}'
+              key: 'cikeTunActiveTime[{#LOCAL}---{#REMOTE}]'
+              history: 1w
+              trends: 90d
+              units: s
+              applications:
+                -
+                  name: 'IPsec VPN items'
+            -
+              name: 'In bytes of  tunnel {#REMOTE}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunInOctets.{#SNMPINDEX}'
+              key: 'cikeTunInOctets[{#LOCAL}---{#REMOTE}]'
+              history: 1w
+              trends: 90d
+              units: bytes
+              applications:
+                -
+                  name: 'IPsec VPN items'
+            -
+              name: 'In packets of  tunnel {#REMOTE}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunInPkts.{#SNMPINDEX}'
+              key: 'cikeTunInPkts[{#LOCAL}---{#REMOTE}]'
+              history: 1w
+              trends: 90d
+              units: Packets
+              applications:
+                -
+                  name: 'IPsec VPN items'
+            -
+              name: 'Out bytes of  tunnel {#REMOTE}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunOutOctets.{#SNMPINDEX}'
+              key: 'cikeTunOutOctets[{#LOCAL}---{#REMOTE}]'
+              history: 1w
+              trends: 90d
+              units: bytes
+              applications:
+                -
+                  name: 'IPsec VPN items'
+            -
+              name: 'Out packets of  tunnel {#REMOTE}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunOutPkts.{#SNMPINDEX}'
+              key: 'cikeTunOutPkts[{#LOCAL}---{#REMOTE}]'
+              history: 1w
+              trends: 90d
+              units: Packets
+              applications:
+                -
+                  name: 'IPsec VPN items'
+            -
+              name: 'Remote ISP address {#REMOTE}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunRemoteAddr.{#SNMPINDEX}'
+              key: 'cikeTunRemoteAddr[{#REMOTE}]'
+              delay: 5m
+              trends: '0'
+              value_type: TEXT
+              application_prototypes:
+                -
+                  name: 'IPsec VPN {#REMOTE}'
+              preprocessing:
+                -
+                  type: JAVASCRIPT
+                  parameters:
+                    - |
+                      var splitData = value.split(" ");
+                      for (var i = 0; i < splitData.length-1; i++){
+                          splitData[i] = parseInt(splitData[i], 16);
+                      }
+                      
+                      var ip = splitData.join(".");
+                      return ip.slice(0,-1);
+                -
+                  type: MATCHES_REGEX
+                  parameters:
+                    - '\D*\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\D*\s*'
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1h
+            -
+              name: 'Status of  tunnel {#REMOTE}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-IPSEC-FLOW-MONITOR-MIB::cikeTunStatus.{#SNMPINDEX}'
+              key: 'cikeTunStatus[{#LOCAL}---{#REMOTE}]'
+              history: 1w
+              trends: 90d
+              applications:
+                -
+                  name: 'IPsec VPN items'
+              request_method: POST
+            -
+              name: 'Connected time {#REMOTE}'
+              type: EXTERNAL
+              key: 'ra_vpn.py["-v",3,"-u","{$SNMP_SECURITY}","-A","{$SNMP_AUTHPASS}","-X","{$SNMP_PRIVPASS}","-H","{HOST.CONN}","-i","{#SNMPINDEX}","-m","time","-r","{#REMOTE}"]'
+              delay: 5m
+              units: s
+              application_prototypes:
+                -
+                  name: 'IPsec VPN {#REMOTE}'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+            -
+              name: 'Remote tun address {#REMOTE}'
+              type: EXTERNAL
+              key: 'ra_vpn.py["-v",3,"-u","{$SNMP_SECURITY}","-A","{$SNMP_AUTHPASS}","-X","{$SNMP_PRIVPASS}","-H","{HOST.CONN}","-i","{#SNMPINDEX}","-m","tunaddress","-r","{#REMOTE}"]'
+              delay: 2m
+              trends: '0'
+              value_type: TEXT
+              application_prototypes:
+                -
+                  name: 'IPsec VPN {#REMOTE}'
+              preprocessing:
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1h
+                -
+                  type: MATCHES_REGEX
+                  parameters:
+                    - '\D*\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\D*\s*'
+          request_method: POST

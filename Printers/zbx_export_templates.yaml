@@ -1,0 +1,56 @@
+zabbix_export:
+  version: '5.4'
+  date: '2021-07-20T06:55:53Z'
+  groups:
+    -
+      uuid: 60f1dce8720d41eab748470cd7d4746e
+      name: Printers
+  templates:
+    -
+      uuid: 821c07ee88f54a9e8b03b9e8699d941b
+      template: 'Printers confluence'
+      name: 'Printers confluence'
+      groups:
+        -
+          name: Printers
+      discovery_rules:
+        -
+          uuid: c8a6693cd0a446d5b9cb500c6e3d091e
+          name: Printers
+          type: EXTERNAL
+          key: 'printers.py[--url,{$URL},--username,{$USERNAME},--password,{$PASSWORD},--pageid,{$PAGEID}]'
+          delay: 1h
+          host_prototypes:
+            -
+              uuid: afe877dca2df4276a2e06f2b138e3473
+              host: '{#HOST}'
+              name: '{#NAME}'
+              group_links:
+                -
+                  group:
+                    name: Printers
+              templates:
+                -
+                  name: 'Kyocera Printers'
+              custom_interfaces: 'YES'
+              interfaces:
+                -
+                  type: SNMP
+                  useip: 'NO'
+                  dns: '{#HOST}'
+                  port: '161'
+                  details:
+                    community: '{$SNMP_COMMUNITY}'
+      macros:
+        -
+          macro: '{$PAGEID}'
+          value: '12345'
+        -
+          macro: '{$PASSWORD}'
+          value: password
+        -
+          macro: '{$URL}'
+          value: 'https://confluence.example.com'
+        -
+          macro: '{$USERNAME}'
+          value: username

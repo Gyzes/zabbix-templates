@@ -1,0 +1,153 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-04-21T09:09:37Z'
+  groups:
+    -
+      name: SSL
+  templates:
+    -
+      template: 'SSL certificate expiry'
+      name: 'SSL certificate expiry'
+      groups:
+        -
+          name: SSL
+      applications:
+        -
+          name: error
+        -
+          name: 'raw data'
+      discovery_rules:
+        -
+          name: 'Urls discovery'
+          type: EXTERNAL
+          key: ssl_check.py
+          delay: 1h
+          item_prototypes:
+            -
+              name: '{#URL} error'
+              type: DEPENDENT
+              key: 'ssl.error[{#URL}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              applications:
+                -
+                  name: error
+              application_prototypes:
+                -
+                  name: '{#URL}'
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.error
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1h
+              master_item:
+                key: 'ssl_check.py[-u,{#URL},-p,{#PORT}]'
+              trigger_prototypes:
+                -
+                  expression: '{strlen()}>0'
+                  name: '{#URL} not monitoring'
+                  priority: AVERAGE
+                  tags:
+                    -
+                      tag: graph
+                      value: 'False'
+            -
+              name: '{#URL} issuer'
+              type: DEPENDENT
+              key: 'ssl.issuer[{#URL}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.ISSUER
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'ssl_check.py[-u,{#URL},-p,{#PORT}]'
+            -
+              name: '{#URL} issue'
+              type: DEPENDENT
+              key: 'ssl.issue[{#URL}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.ISSUE
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'ssl_check.py[-u,{#URL},-p,{#PORT}]'
+            -
+              name: '{#URL} not after'
+              type: DEPENDENT
+              key: 'ssl.notafter[{#URL}]'
+              delay: '0'
+              units: unixtime
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.NOTAFTER
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'ssl_check.py[-u,{#URL},-p,{#PORT}]'
+            -
+              name: '{#URL} not before'
+              type: DEPENDENT
+              key: 'ssl.notbefore[{#URL}]'
+              delay: '0'
+              units: unixtime
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.NOTBEFORE
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'ssl_check.py[-u,{#URL},-p,{#PORT}]'
+            -
+              name: '{#URL} ssl timeleft'
+              type: CALCULATED
+              key: 'ssl.timeleft[{#URL}]'
+              delay: 1h
+              units: s
+              params: 'last(ssl.notafter[{#URL}]) - last(Zabbix server:system.localtime)'
+              application_prototypes:
+                -
+                  name: '{#URL}'
+              trigger_prototypes:
+                -
+                  expression: '{last()}<=604800'
+                  name: '{#URL} certificate expires in 7 days'
+                  priority: HIGH
+            -
+              name: '{#URL} raw data'
+              type: EXTERNAL
+              key: 'ssl_check.py[-u,{#URL},-p,{#PORT}]'
+              delay: 1h
+              trends: '0'
+              value_type: TEXT
+              applications:
+                -
+                  name: 'raw data'

@@ -1,0 +1,67 @@
+zabbix_export:
+  version: '5.4'
+  date: '2021-06-24T09:44:50Z'
+  groups:
+    -
+      uuid: 992374d8e2e24f17bebc50a6e57becd6
+      name: Exchange
+    -
+      uuid: 4dfbb099eafd4c82a033bf92946d3ce6
+      name: Mail
+  templates:
+    -
+      uuid: 56a4fae28af24bba9a06e144ff17506d
+      template: 'Exchange mailbox items'
+      name: 'Exchange mailbox items'
+      groups:
+        -
+          name: Exchange
+        -
+          name: Mail
+      items:
+        -
+          uuid: 936f0348ede14e91a79d2af77ca3d593
+          name: 'Mailbox check'
+          key: mailboxitems.check
+          delay: '{$MAILBOX_CHECK}'
+          tags:
+            -
+              tag: Application
+              value: Mailbox
+      discovery_rules:
+        -
+          uuid: 82da272a077846ae8a1498391add4c5b
+          name: 'Maibox Items'
+          type: TRAP
+          key: mailboxitems.discovery
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 70054466a1ef43a3aba257d738886b21
+              name: 'Mailbox items {#MAILBOXNAME}'
+              type: TRAP
+              key: 'mailboxitems[{#MAILBOXNAME}]'
+              delay: '0'
+              tags:
+                -
+                  tag: Application
+                  value: Mailbox
+              trigger_prototypes:
+                -
+                  uuid: da817892560a4e349ddd1ef71d348ee3
+                  expression: 'last(/Exchange mailbox items/mailboxitems[{#MAILBOXNAME}])>15'
+                  name: 'Mailbox items {#MAILBOXNAME}'
+                  priority: AVERAGE
+                -
+                  uuid: 0268c997736745abb6fe3b3761d05764
+                  expression: 'nodata(/Exchange mailbox items/mailboxitems[{#MAILBOXNAME}],30m)=1'
+                  name: 'No data for mailbox {#MAILBOXNAME}'
+                  priority: AVERAGE
+                  dependencies:
+                    -
+                      name: 'Zabbix agent is not available (for {$AGENT.TIMEOUT})'
+                      expression: 'max(/Template OS Windows by Zabbix agent/zabbix[host,agent,available],{$AGENT.TIMEOUT})=0'
+      macros:
+        -
+          macro: '{$MAILBOX_CHECK}'
+          value: 10m

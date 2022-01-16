@@ -1,0 +1,481 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-04-21T08:19:57Z'
+  groups:
+    -
+      name: Templates
+  templates:
+    -
+      template: 'Template App MSSQL 2008-2016'
+      name: 'Template App MSSQL 2008-2016'
+      groups:
+        -
+          name: Templates
+      discovery_rules:
+        -
+          name: 'Database Discovery'
+          key: mssql.db.discovery
+          delay: 1h
+          item_prototypes:
+            -
+              name: 'SQL Server, Instance {#INST}: Access Methods\Page Splits/sec'
+              key: 'perf_counter_en["\{#INST}:Access Methods\Page Splits/sec"]'
+              value_type: FLOAT
+              application_prototypes:
+                -
+                  name: 'MSSQL ACCESS METHODS'
+            -
+              name: 'SQL Server, Instance {#INST}: Bytes Received from Replica/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Bytes Received from Replica/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Bytes Sent to Replica/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Bytes Sent to Replica/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Bytes Sent to Transport/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Bytes Sent to Transport/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Flow Control/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Flow Control/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Flow Control Time (ms/sec)'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Flow Control Time (ms/sec)"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Receives from Replica/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Receives from Replica/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Resent Messages/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Resent Messages/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Sends to Replica/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Sends to Replica/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Sends to Transport/sec'
+              key: 'perf_counter_en["\{#INST}:Availability Replica(_Total)\Sends to Transport/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Buffer Manager\Page life expectancy'
+              key: 'perf_counter_en["\{#INST}:Buffer Manager\Page life expectancy"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL MEMORY'
+            -
+              name: 'SQL Server, Instance {#INST}: Buffer Manager\Page reads/sec'
+              key: 'perf_counter_en["\{#INST}:Buffer Manager\Page reads/sec"]'
+              value_type: FLOAT
+              application_prototypes:
+                -
+                  name: 'MSSQL MEMORY'
+            -
+              name: 'SQL Server, Instance {#INST}: Buffer Manager\Page writes/sec'
+              key: 'perf_counter_en["\{#INST}:Buffer Manager\Page writes/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL MEMORY'
+            -
+              name: 'SQL Server, Instance {#INST}: Database Flow Control Delay'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Database Flow Control Delay"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Database Flow Controls/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Database Flow Controls/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: File Bytes Received/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\File Bytes Received/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Group Commits/Sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Group Commits/Sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Group Commit Time'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Group Commit Time"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Bytes Compressed/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Bytes Compressed/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Bytes Decompressed/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Bytes Decompressed/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Bytes Received/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Bytes Received/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Compression Cache hits/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Compression Cache hits/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Compression Cache misses/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Compression Cache misses/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Compressions/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Compressions/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Decompressions/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Decompressions/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log remaining for undo'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log remaining for undo"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Log Send Queue'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Log Send Queue"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Mirrored Write Transactions/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Mirrored Write Transactions/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Recovery Queue'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Recovery Queue"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL REPLICA'
+            -
+              name: 'SQL Server, Instance {#INST}: Redo blocked/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Redo blocked/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Redo Bytes Remaining'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Redo Bytes Remaining"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Redone Bytes/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Redone Bytes/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Redones/sec'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Redones/sec"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Total Log requiring undo'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Total Log requiring undo"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Transaction Delay'
+              key: 'perf_counter_en["\{#INST}:Database Replica(_Total)\Transaction Delay"]'
+            -
+              name: 'SQL Server, Instance {#INST}: Databases(_Total)\Percent Log Used'
+              key: 'perf_counter_en["\{#INST}:Databases(_Total)\Percent Log Used"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL DATABASE'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Active Transactions'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Active Transactions"]'
+              value_type: FLOAT
+              description: 'Number of active transactions for the database.'
+              application_prototypes:
+                -
+                  name: 'MSSQL DATABASE'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Data File Size'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Data File(s) Size (KB)"]'
+              value_type: FLOAT
+              units: B
+              description: 'Cumulative size (in kilobytes) of all the data files in the database including any automatic growth. Monitoring this counter is useful, for example, for determining the correct size of tempdb.'
+              application_prototypes:
+                -
+                  name: 'MSSQL DATABASE'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '1024'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log Bytes Flushed/sec'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log Bytes Flushed/sec"]'
+              value_type: FLOAT
+              units: B
+              description: 'Total number of log bytes flushed per second. Useful for determining trends and utilization of the transaction log.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log File Size'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log File(s) Size (KB)"]'
+              value_type: FLOAT
+              units: B
+              description: 'Cumulative size (in kilobytes) of all the transaction log files in the database.'
+              application_prototypes:
+                -
+                  name: 'MSSQL DATABASE'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '1024'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log File Used Size'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log File(s) Used Size (KB)"]'
+              value_type: FLOAT
+              units: B
+              description: 'The cumulative used size of all the log files in the database.'
+              application_prototypes:
+                -
+                  name: 'MSSQL DATABASE'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '1024'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log Flushes/sec'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log Flushes/sec"]'
+              value_type: FLOAT
+              description: 'Number of log flushes per second.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log Flush Waits/sec'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log Flush Waits/sec"]'
+              value_type: FLOAT
+              description: 'Number of commits per second waiting for the log flush.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log Flush Wait Time'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log Flush Wait Time"]'
+              value_type: FLOAT
+              units: ms
+              description: 'Total wait time (in milliseconds) to flush the log. On an AlwaysOn secondary database, this value indicates the wait time for log records to be hardened to disk.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log Growths'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log Growths"]'
+              value_type: FLOAT
+              description: 'Total number of times the transaction log for the database has been expanded.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log Shrinks'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log Shrinks"]'
+              value_type: FLOAT
+              description: 'Total number of times the transaction log for the database has been shrunk.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Log Truncations'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Log Truncations"]'
+              value_type: FLOAT
+              description: 'The number of times the transaction log has been shrunk.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Percent Log Used'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Percent Log Used"]'
+              value_type: FLOAT
+              units: '%'
+              description: 'Percentage of space in the log that is in use.'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Transactions per second'
+              key: 'perf_counter_en["\{#INST}:Databases({#DBNAME})\Transactions/sec"]'
+              value_type: FLOAT
+            -
+              name: 'SQL Server, Instance {#INST}:General Statistics\User Connections'
+              key: 'perf_counter_en["\{#INST}:General Statistics\User Connections"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL STATS'
+            -
+              name: 'SQL Server, Instance {#INST}:Locks(_Total)\Lock Timeouts/sec'
+              key: 'perf_counter_en["\{#INST}:Locks(_Total)\Lock Timeouts/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL LOCKS'
+            -
+              name: 'SQL Server, Instance {#INST}:Locks(_Total)\Number of Deadlocks/sec'
+              key: 'perf_counter_en["\{#INST}:Locks(_Total)\Number of Deadlocks/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL LOCKS'
+            -
+              name: 'SQL Server, Instance {#INST}:Memory Manager\Memory Grants Pending'
+              key: 'perf_counter_en["\{#INST}:Memory Manager\Memory Grants Pending"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL MEMORY'
+            -
+              name: 'SQL Server, Instance {#INST}:Memory Manager\Target Server Memory (KB)'
+              key: 'perf_counter_en["\{#INST}:Memory Manager\Target Server Memory (KB)"]'
+              units: KB
+              application_prototypes:
+                -
+                  name: 'MSSQL MEMORY'
+            -
+              name: 'SQL Server, Instance {#INST}:Memory Manager\Total Server Memory (KB)'
+              key: 'perf_counter_en["\{#INST}:Memory Manager\Total Server Memory (KB)"]'
+              units: KB
+              application_prototypes:
+                -
+                  name: 'MSSQL MEMORY'
+            -
+              name: 'SQL Server, Instance {#INST}:SQL Statistics\Batch Requests/sec'
+              key: 'perf_counter_en["\{#INST}:SQL Statistics\Batch Requests/sec"]'
+              value_type: FLOAT
+              application_prototypes:
+                -
+                  name: 'MSSQL STATS'
+            -
+              name: 'SQL Server, Instance {#INST}:SQL Statistics\SQL Compilations/sec'
+              key: 'perf_counter_en["\{#INST}:SQL Statistics\SQL Compilations/sec"]'
+              value_type: FLOAT
+              application_prototypes:
+                -
+                  name: 'MSSQL STATS'
+            -
+              name: 'SQL Server, Instance {#INST}:SQL Statistics\SQL Re-Compilations/sec'
+              key: 'perf_counter_en["\{#INST}:SQL Statistics\SQL Re-Compilations/sec"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL STATS'
+            -
+              name: 'SQL Server, Instance {#INST}:Memory grant queue waits/Average wait time (ms)'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Average wait time (ms))\Memory grant queue waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Network IO waits/Average wait time (ms)'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Average wait time (ms))\Network IO waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Page IO latch waits/Average wait time (ms)'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Average wait time (ms))\Page IO latch waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Memory grant queue waits/Cumulative wait time (ms) per second'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Cumulative wait time (ms) per second)\Memory grant queue waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Network IO waits/Cumulative wait time (ms) per second'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Cumulative wait time (ms) per second)\Network IO waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Page IO latch waits/Cumulative wait time (ms) per second'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Cumulative wait time (ms) per second)\Page IO latch waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Memory grant queue waits/Waits in progress'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Waits in progress)\Memory grant queue waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Network IO waits/Waits in progress'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Waits in progress)\Network IO waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Page IO latch waits/Waits in progress'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Waits in progress)\Page IO latch waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Memory grant queue waits/Waits started per second'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Waits started per second)\Memory grant queue waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Network IO waits/Waits started per second'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Waits started per second)\Network IO waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}:Page IO latch waits/Waits started per second'
+              key: 'perf_counter_en["\{#INST}:Wait Statistics(Waits started per second)\Page IO latch waits"]'
+              units: ms
+              application_prototypes:
+                -
+                  name: 'MSSQL WAITS'
+            -
+              name: 'SQL Server, Instance {#INST}, DB {#DBNAME}: Database Status'
+              key: 'system.run["powershell C:\''Program Files''\''Zabbix Agent''\scripts\database_status_disc.ps1 -instName ''{#INST}'' -dbName ''{#DBNAME}''"]'
+              trends: '0'
+              status: DISABLED
+              value_type: TEXT
+              application_prototypes:
+                -
+                  name: 'MSSQL DATABASE'
+              trigger_prototypes:
+                -
+                  expression: '{iregexp(ONLINE,15m)}=0'
+                  name: 'Database - {#DBNAME} on Instance {#INST} is not running'
+                  priority: HIGH
+                  description: |
+                    EC tag is for Event Correlation.
+                    Setup a rule for "event tag pair", use EC=EC, and set operation to close new event. This way only one event per database remains open.
+                  tags:
+                    -
+                      tag: EC
+                      value: '{#DBNAME}'
+                -
+                  expression: '{nodata(30m)}=1'
+                  name: 'Database - {#DBNAME} on Instance {#INST} Users Cannot Connect'
+                  priority: HIGH
+                  description: |
+                    EC tag is for Event Correlation.
+                    Setup a rule for "event tag pair", use EC=EC, and set operation to close new event. This way only one event per database remains open.
+                  tags:
+                    -
+                      tag: EC
+                      value: '{#DBNAME}'
+        -
+          name: 'SQL Error Log'
+          key: mssql.errorlog
+          delay: 1h
+          status: DISABLED
+          item_prototypes:
+            -
+              name: 'SQL Server, Instance {#INST}: Error Log File (LOGCount)'
+              type: ZABBIX_ACTIVE
+              key: 'log.count[{#ERRORLOG},Error|Failed,"UTF-16"]'
+              application_prototypes:
+                -
+                  name: 'MSSQL Error Log'
+              trigger_prototypes:
+                -
+                  expression: '{sum(5m)}>0'
+                  name: 'Errors in {#IINST} ERRORLOG'
+                  priority: WARNING
+            -
+              name: 'SQL Server, Instance {#INST}: Error Log File (LOG)'
+              type: ZABBIX_ACTIVE
+              key: 'log[{#ERRORLOG},Error|Failed,"UTF-16"]'
+              trends: '0'
+              value_type: LOG
+              application_prototypes:
+                -
+                  name: 'MSSQL Error Log'

@@ -1,0 +1,317 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-04-21T08:32:08Z'
+  groups:
+    -
+      name: Templates
+  templates:
+    -
+      template: 'Template App Postfix'
+      name: 'Template App Postfix'
+      groups:
+        -
+          name: Templates
+      applications:
+        -
+          name: Postfix
+      items:
+        -
+          name: 'Postfix Queue Lenght'
+          key: postfix.queue
+          applications:
+            -
+              name: Postfix
+          triggers:
+            -
+              expression: '{last()}>40'
+              name: 'More than $1 messages in Queues'
+              priority: HIGH
+        -
+          name: 'Postfix Bounced'
+          key: 'postfix[bounced]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+          triggers:
+            -
+              expression: '{last(0)}>50'
+              name: 'Postfix: Too many bounced mails on {HOST.NAME}'
+              priority: WARNING
+        -
+          name: 'Postfix Bytes Delivered'
+          key: 'postfix[bytes_delivered]'
+          delay: 10m
+          history: 30d
+          units: B
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Bytes Received'
+          key: 'postfix[bytes_received]'
+          delay: 10m
+          history: 30d
+          units: B
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Deferred'
+          key: 'postfix[deferred]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+          triggers:
+            -
+              expression: '{last(0)}>40'
+              name: 'Postfix: Too many deferred mails'
+              priority: HIGH
+        -
+          name: 'Postfix Delivered'
+          key: 'postfix[delivered]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Discarded'
+          key: 'postfix[discarded]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Forwarded'
+          key: 'postfix[forwarded]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Held'
+          key: 'postfix[held]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Received'
+          key: 'postfix[received]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Rejected'
+          key: 'postfix[rejected]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+        -
+          name: 'Postfix Reject Warnings'
+          key: 'postfix[reject_warnings]'
+          delay: 10m
+          history: 30d
+          units: mails
+          applications:
+            -
+              name: Postfix
+          preprocessing:
+            -
+              type: SIMPLE_CHANGE
+              parameters:
+                - ''
+  triggers:
+    -
+      expression: '{Template App Postfix:postfix[rejected].last(0)}>300 or {Template App Postfix:postfix[reject_warnings].last(0)}>300'
+      name: 'Postfix: Too many rejected mails on {HOST.NAME}'
+      priority: HIGH
+  graphs:
+    -
+      name: 'Postfix Error Pie'
+      yaxismax: '0'
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      type: EXPLODED
+      show_3d: 'YES'
+      graph_items:
+        -
+          color: C80000
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[bounced]'
+        -
+          sortorder: '1'
+          color: 00C800
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[deferred]'
+        -
+          sortorder: '2'
+          color: 0000C8
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[discarded]'
+        -
+          sortorder: '3'
+          color: C800C8
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[rejected]'
+        -
+          sortorder: '4'
+          color: 00C8C8
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[reject_warnings]'
+    -
+      name: 'Postfix Mails Scoreboard'
+      height: '300'
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      graph_items:
+        -
+          color: '009900'
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[bounced]'
+        -
+          sortorder: '1'
+          color: FF99FF
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[reject_warnings]'
+        -
+          sortorder: '2'
+          color: EE00EE
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[discarded]'
+        -
+          sortorder: '3'
+          color: '880088'
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[rejected]'
+        -
+          sortorder: '4'
+          color: 0000CC
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[received]'
+        -
+          sortorder: '5'
+          color: FF6666
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[held]'
+        -
+          sortorder: '6'
+          color: FFFF33
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[forwarded]'
+        -
+          sortorder: '7'
+          drawtype: BOLD_LINE
+          color: 00EE00
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[delivered]'
+        -
+          sortorder: '8'
+          color: EE0000
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[deferred]'
+        -
+          sortorder: '9'
+          color: AC3C00
+          item:
+            host: 'Template App Postfix'
+            key: postfix.queue
+    -
+      name: 'Postfix Traffic'
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      graph_items:
+        -
+          color: C80000
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[bytes_received]'
+        -
+          sortorder: '1'
+          color: 00C800
+          item:
+            host: 'Template App Postfix'
+            key: 'postfix[bytes_delivered]'

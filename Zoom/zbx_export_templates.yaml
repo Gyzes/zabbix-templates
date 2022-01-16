@@ -1,0 +1,134 @@
+zabbix_export:
+  version: '5.4'
+  date: '2021-06-15T04:15:53Z'
+  groups:
+    -
+      uuid: bc1f55f482a24f2bade07c661806c4eb
+      name: WEB
+  templates:
+    -
+      uuid: cde7c7546b0147aabcc2107e3d49e8c2
+      template: 'Zoom api'
+      name: 'Zoom api'
+      groups:
+        -
+          name: WEB
+      discovery_rules:
+        -
+          uuid: 62fc59516f9744eea46774f2804edecb
+          name: 'Zoom rooms'
+          type: EXTERNAL
+          key: 'zoom.py[--token,{$TOKEN}]'
+          delay: 1h
+          item_prototypes:
+            -
+              uuid: b1091ce42d2d4e72af897ea1d6b74390
+              name: '{#ROOMNAME} {#DEVICE_ID} status'
+              type: DEPENDENT
+              key: 'zoom.device.status[{#DEVICE_ID}]'
+              delay: '0'
+              valuemap:
+                name: 'Device status'
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.STATUS
+                -
+                  type: STR_REPLACE
+                  parameters:
+                    - Offline
+                    - '0'
+                -
+                  type: STR_REPLACE
+                  parameters:
+                    - Online
+                    - '1'
+              master_item:
+                key: 'zoom.py["--token","{$TOKEN}","--roomid","{#ROOMID}","--deviceid","{#DEVICE_ID}"]'
+              trigger_prototypes:
+                -
+                  uuid: d42274fdb7814677be48c8acb6abaf52
+                  expression: 'last(/Zoom api/zoom.device.status[{#DEVICE_ID}])=0'
+                  name: '{#ROOMNAME} {#DEVICE_ID} down'
+                  priority: AVERAGE
+            -
+              uuid: 50aa9c323df14c1eb88b9cea1f770874
+              name: '{#ROOMNAME} {#DEVICE_ID} system'
+              type: DEPENDENT
+              key: 'zoom.device.system[{#DEVICE_ID}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.SYSTEM
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'zoom.py["--token","{$TOKEN}","--roomid","{#ROOMID}","--deviceid","{#DEVICE_ID}"]'
+            -
+              uuid: f292410a040f42fcae877ef4ae2966eb
+              name: '{#ROOMNAME} {#DEVICE_ID} device type'
+              type: DEPENDENT
+              key: 'zoom.device.type[{#DEVICE_ID}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.DEVICETYPE
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'zoom.py["--token","{$TOKEN}","--roomid","{#ROOMID}","--deviceid","{#DEVICE_ID}"]'
+            -
+              uuid: 08469dd3f5fd48078b6e289785ac341b
+              name: '{#ROOMNAME} {#DEVICE_ID} app version'
+              type: DEPENDENT
+              key: 'zoom.device.version[{#DEVICE_ID}]'
+              delay: '0'
+              trends: '0'
+              value_type: CHAR
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - $.APP_VERSION
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1d
+              master_item:
+                key: 'zoom.py["--token","{$TOKEN}","--roomid","{#ROOMID}","--deviceid","{#DEVICE_ID}"]'
+            -
+              uuid: df9a60b34856454882cd96192a934af9
+              name: '{#ROOMNAME} {#DEVICE_ID} raw data'
+              type: EXTERNAL
+              key: 'zoom.py["--token","{$TOKEN}","--roomid","{#ROOMID}","--deviceid","{#DEVICE_ID}"]'
+              delay: 10m
+              trends: '0'
+              value_type: TEXT
+      macros:
+        -
+          macro: '{$TOKEN}'
+          value: asguqgnqhuiwgnquijwgqwg
+      valuemaps:
+        -
+          uuid: 55463cd2751a4132bcd23dda60c1999c
+          name: 'Device status'
+          mappings:
+            -
+              value: '1'
+              newvalue: up
+            -
+              value: '0'
+              newvalue: down

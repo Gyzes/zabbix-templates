@@ -1,0 +1,242 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-04-21T07:49:31Z'
+  groups:
+    -
+      name: Cisco
+  templates:
+    -
+      template: 'Cisco StackWise'
+      name: 'Cisco StackWise'
+      groups:
+        -
+          name: Cisco
+      applications:
+        -
+          name: 'Stack Info'
+        -
+          name: 'Stack Port Info'
+      items:
+        -
+          name: 'Ring Redundant'
+          type: SNMP_AGENT
+          snmp_oid: 'CISCO-STACKWISE-MIB::cswRingRedundant.0'
+          key: cswRingRedundant
+          delay: '30'
+          description: 'A value of ''true'' is returned when the stackports are connected in such a way that it forms a redundant ring.'
+          applications:
+            -
+              name: 'Stack Info'
+          valuemap:
+            name: cswRingRedundant
+          triggers:
+            -
+              expression: '{last(#3)}<>1'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: '{avg(10m)}=1'
+              name: 'Stack not Ring Redundant'
+              priority: AVERAGE
+      discovery_rules:
+        -
+          name: 'Stack Port Info'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#CSWSTACKPORTOPERSTATUS}, CISCO-STACKWISE-MIB::cswStackPortOperStatus,{#CSWSWITCHNUMCURRENT}, CISCO-STACKWISE-MIB::cswSwitchNumCurrent]'
+          key: cswStackPortOperStatus
+          delay: 1h
+          status: DISABLED
+          item_prototypes:
+            -
+              name: 'Switch {#CSWSTACKPORTOPERSTATUS} Stack port {#SNMPINDEX} status'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-STACKWISE-MIB::cswStackPortOperStatus.{#SNMPINDEX}'
+              key: 'cswStackPortOperStatus[{#SNMPINDEX}]'
+              delay: '30'
+              description: |
+                The state of the stackport.
+                up - Connected and operational.
+                down - Not connected to a neighboring switch or administrative down.
+                forcedDown - Shut down by stack manager due to mismatch or stackport errors.
+              applications:
+                -
+                  name: 'Stack Port Info'
+              valuemap:
+                name: cswStackPortOperStatus
+              trigger_prototypes:
+                -
+                  expression: '{last()}<>1'
+                  name: 'Switch {#CSWSTACKPORTOPERSTATUS} Stack port status changed'
+                  priority: WARNING
+                  type: MULTIPLE
+        -
+          name: 'Stack Info'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#CSWSWITCHNUMCURRENT}, CISCO-STACKWISE-MIB::cswSwitchNumCurrent]'
+          key: cswSwitchNumCurrent
+          delay: 1h
+          item_prototypes:
+            -
+              name: 'MAC address switch {#CSWSWITCHNUMCURRENT}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-STACKWISE-MIB::cswSwitchMacAddress.{#SNMPINDEX}'
+              key: 'cswSwitchMacAddress[{#CSWSWITCHNUMCURRENT}]'
+              delay: 1h
+              trends: '0'
+              value_type: TEXT
+              description: |
+                The MAC address of the switch.
+                Note:This object will contain the value of 0000:0000:0000 if the cswSwitchState value is other than 'ready'.
+              applications:
+                -
+                  name: 'Stack Info'
+            -
+              name: 'Switch number current {#CSWSWITCHNUMCURRENT}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-STACKWISE-MIB::cswSwitchNumCurrent.{#SNMPINDEX}'
+              key: 'cswSwitchNumCurrent[{#CSWSWITCHNUMCURRENT}]'
+              delay: 1h
+              status: DISABLED
+              description: |
+                This object contains the current switch identification number. This number should match any logical labeling on the switch.
+                For example, a switch whose interfaces are labeled 'interface #3' this value should be 3.
+              applications:
+                -
+                  name: 'Stack Info'
+            -
+              name: 'Role switch {#CSWSWITCHNUMCURRENT}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-STACKWISE-MIB::cswSwitchRole.{#SNMPINDEX}'
+              key: 'cswSwitchRole[{#CSWSWITCHNUMCURRENT}]'
+              delay: 1h
+              description: |
+                This object describes the function of the switch:
+                master - stack master.
+                member - active member of the stack.
+                notMember - none-active stack member, see cswSwitchState for status.
+              applications:
+                -
+                  name: 'Stack Info'
+              valuemap:
+                name: cswSwitchRole
+            -
+              name: 'Software image switch {#CSWSWITCHNUMCURRENT}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-STACKWISE-MIB::cswSwitchSoftwareImage.{#SNMPINDEX}'
+              key: 'cswSwitchSoftwareImage[{#CSWSWITCHNUMCURRENT}]'
+              delay: 1h
+              trends: '0'
+              value_type: TEXT
+              description: |
+                The software image type running on the switch.
+                Note:This object will contain an empty string if the cswSwitchState value is other than 'ready'.
+              applications:
+                -
+                  name: 'Stack Info'
+            -
+              name: 'State switch {#CSWSWITCHNUMCURRENT}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-STACKWISE-MIB::cswSwitchState.{#SNMPINDEX}'
+              key: 'cswSwitchState[{#CSWSWITCHNUMCURRENT}]'
+              delay: '30'
+              description: |
+                The current state of a switch:
+                waiting - Waiting for a limited time on other switches in the stack to come online.
+                progressing - Master election or mismatch checks in progress.
+                added - The switch is added to the stack.
+                ready - The switch is operational.
+                sdmMismatch - The SDM template configured on the master is not supported by the new member.
+                verMismatch - The operating system version running on the master is different from the operating system version running on this member.
+                featureMismatch - Some of the features configured on the master are not supported on this member.
+                newMasterInit - Waiting for the new master to finish initialization after master switchover (Master Re-Init).
+                provisioned - The switch is not an active member of the stack.
+                invalid - The switch's state machine is in an invalid state.
+              applications:
+                -
+                  name: 'Stack Info'
+              valuemap:
+                name: cswSwitchState
+              trigger_prototypes:
+                -
+                  expression: '{last()}<>4'
+                  name: 'Switch {#CSWSWITCHNUMCURRENT} state is $1'
+                  priority: HIGH
+            -
+              name: 'Priority switch {#CSWSWITCHNUMCURRENT}'
+              type: SNMP_AGENT
+              snmp_oid: 'CISCO-STACKWISE-MIB::cswSwitchSwPriority.{#SNMPINDEX}'
+              key: 'cswSwitchSwPriority[{#CSWSWITCHNUMCURRENT}]'
+              delay: 1h
+              description: |
+                This object contains the hardware priority of a switch.  If two or more entries in this table have the same cswSwitchSwPriority value during the master election time,
+                the switch with the highest cswSwitchHwPriority will become
+                the master.
+                Note:This object will contain the value of 0 if the cswSwitchState value is other than 'ready'.
+              applications:
+                -
+                  name: 'Stack Info'
+  value_maps:
+    -
+      name: cswRingRedundant
+      mappings:
+        -
+          value: '1'
+          newvalue: 'true'
+    -
+      name: cswStackPortOperStatus
+      mappings:
+        -
+          value: '1'
+          newvalue: up
+        -
+          value: '2'
+          newvalue: down
+        -
+          value: '3'
+          newvalue: forcedDown
+    -
+      name: cswSwitchRole
+      mappings:
+        -
+          value: '1'
+          newvalue: master
+        -
+          value: '2'
+          newvalue: member
+        -
+          value: '3'
+          newvalue: notMember
+    -
+      name: cswSwitchState
+      mappings:
+        -
+          value: '1'
+          newvalue: waiting
+        -
+          value: '2'
+          newvalue: progressing
+        -
+          value: '3'
+          newvalue: added
+        -
+          value: '4'
+          newvalue: ready
+        -
+          value: '5'
+          newvalue: 5sdmMismatch
+        -
+          value: '6'
+          newvalue: verMismatch
+        -
+          value: '7'
+          newvalue: featureMismatch
+        -
+          value: '8'
+          newvalue: newMasterInit
+        -
+          value: '9'
+          newvalue: provisioned
+        -
+          value: '10'
+          newvalue: invalid
+        -
+          value: '11'
+          newvalue: removed

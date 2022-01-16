@@ -1,0 +1,671 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-04-21T08:58:53Z'
+  groups:
+    -
+      name: Templates
+  templates:
+    -
+      template: 'Template Exchange Server'
+      name: 'Template Exchange Server'
+      description: |
+        MS Exchange Server 201X template
+        v0.1.1
+        
+        LLD:
+         - Databases (with PowerShell script)
+        
+        All thresholds taken from this page:
+        https://docs.microsoft.com/ru-ru/exchange/exchange-2013-performance-counters-exchange-2013-help
+      groups:
+        -
+          name: Templates
+      applications:
+        -
+          name: 'Exchange CAS Metrics'
+        -
+          name: 'Exchange Databases Summary'
+        -
+          name: 'Exchange EDB Files'
+        -
+          name: 'Exchange Frontend Transport'
+        -
+          name: 'Exchange Processes'
+        -
+          name: 'Exchange Services'
+        -
+          name: 'Exchange Transport'
+      items:
+        -
+          name: 'Exchange mounted databases count'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchange Active Manager(_total)\Database Mounted"]'
+          history: '{$HISTORY}'
+          trends: '0'
+          value_type: FLOAT
+          description: 'Amount of mounted databases.'
+          applications:
+            -
+              name: 'Exchange Databases Summary'
+        -
+          name: 'ActiveSync ping command pending'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchange ActiveSync\Ping Commands Pending",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the number of ping commands currently pending in the queue.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'ActiveSync requests per second'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchange ActiveSync\Requests/sec",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the number of HTTP requests received from the client via ASP.NET per second. Determines the current Exchange ActiveSync request rate. Used only to determine current user load.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'ActiveSync sync commands per second'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchange ActiveSync\Sync Commands/sec",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the number of sync commands processed per second. Clients use this command to synchronize items within a folder.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'Autodiscover requests per second'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchangeAutodiscover\Requests/sec",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the number of Autodiscover service requests processed each second. Determines current user load.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'Availability Service availability requests per second'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchange Availability Service\Availability Requests (sec)",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the number of requests serviced per second. The request can be only for free/ busy information or include suggestions. One request may contain multiple mailboxes. Determines the rate at which Availability service requests are occurring.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'OWA current unique users'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchange OWA\Current Unique Users",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: |
+            The number of unique active user sessions, so that users are only removed from this counter after they log off or their session times out. Determines current user load.
+            
+            # There are many problems with that performance counter - it can starts to show huge numbers of connected users randomly. So trigger is disabled by default.
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+          triggers:
+            -
+              expression: '{last()}>2000000000'
+              name: 'Perfomance Counter for OWA Unique Users fucked up'
+              status: DISABLED
+              priority: WARNING
+              description: |
+                Счётчик "\MSExchange OWA\Current Unique Users" показывает дичь. Известный баг, iisreset помогает.
+                
+                Триггер для наблюдения за поведением счётчика!
+              tags:
+                -
+                  tag: exchange
+                  value: owa
+        -
+          name: 'OWA requests per second'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchange OWA\Requests/sec",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the number of requests handled by Outlook Web App per second. Determines current user load.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'MSExchangeWS requests per second'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\MSExchangeWS\Requests/sec",{$PERFCOUNTER_PERIOD}]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the number of requests processed each second. Determines current user load.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'Web Service Default Web Site Current Connections'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en["\Web Service\Current Connections",{$PERFCOUNTER_PERIOD}]'
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          description: 'Shows the current number of connections established to the Default website which corresponds to the number of connections hitting the Front End CAS server role. Determines current user load.'
+          applications:
+            -
+              name: 'Exchange CAS Metrics'
+        -
+          name: 'Messages Completed Delivery/sec'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en[\MSExchangeTransport Queues(_total)\Messages Completed Delivery Per Second]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          applications:
+            -
+              name: 'Exchange Transport'
+        -
+          name: 'Messages Queued For Delivery'
+          type: ZABBIX_ACTIVE
+          key: 'perf_counter_en[\MSExchangeTransport Queues(_total)\Messages Queued For Delivery]'
+          delay: 30s
+          history: '{$HISTORY}'
+          trends: '{$TRENDS}'
+          value_type: FLOAT
+          applications:
+            -
+              name: 'Exchange Transport'
+        -
+          name: 'Processes Microsoft.Exchange.Store.Worker.exe count'
+          type: ZABBIX_ACTIVE
+          key: 'proc.num["Microsoft.Exchange.Store.Worker.exe"]'
+          history: '{$HISTORY}'
+          trends: '0'
+          description: 'Microsoft.Exchange.Store.Worker.exe processes count'
+          applications:
+            -
+              name: 'Exchange Processes'
+        -
+          name: 'Processes Microsoft.Exchange.Store.Worker.exe wkset summary'
+          type: ZABBIX_ACTIVE
+          key: 'proc_info["Microsoft.Exchange.Store.Worker.exe",wkset,sum]'
+          history: '{$HISTORY}'
+          trends: '0'
+          units: B
+          description: 'Microsoft.Exchange.Store.Worker.exe processes working set summary'
+          applications:
+            -
+              name: 'Exchange Processes'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1024'
+        -
+          name: 'Processes MSExchangeFrontendTransport.exe wkset'
+          type: ZABBIX_ACTIVE
+          key: 'proc_info["MSExchangeFrontendTransport.exe",wkset]'
+          history: '{$HISTORY}'
+          trends: '0'
+          units: B
+          description: 'MSExchangeFrontendTransport.exe process working set.'
+          applications:
+            -
+              name: 'Exchange Processes'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1024'
+        -
+          name: 'Processes MSExchangeTransport.exe wkset'
+          type: ZABBIX_ACTIVE
+          key: 'proc_info["MSExchangeTransport.exe",wkset]'
+          history: '{$HISTORY}'
+          trends: '0'
+          units: B
+          description: 'MSExchangeTransport.exe process working set.'
+          applications:
+            -
+              name: 'Exchange Processes'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1024'
+      discovery_rules:
+        -
+          name: 'Exchange Database Discovery'
+          type: ZABBIX_ACTIVE
+          key: 'exchange.db.discovery["{$EXCHANGE.VERSION}"]'
+          delay: 1h
+          lifetime: 2d
+          description: 'Discovery all Exchange databases'
+          item_prototypes:
+            -
+              name: '{#DB.NAME} database copy status'
+              key: 'perf_counter_en["\MSExchange Active Manager({#DB.LCNAME})\Database Copy Role Active"]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: |
+                Is the database {#DB.NAME} copy active?
+                0 - passive
+                1 - active
+              application_prototypes:
+                -
+                  name: 'MSExchange Active Manager: {#DB.NAME}'
+              valuemap:
+                name: 'Exchange Server 2016 Database Copy State'
+            -
+              name: '{#DB.NAME} database mounted state'
+              key: 'perf_counter_en["\MSExchange Active Manager({#DB.LCNAME})\Database Mounted"]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: |
+                Database {#DB.NAME} mounted state.
+                0 - not mounted
+                1 - mounted
+              application_prototypes:
+                -
+                  name: 'MSExchange Active Manager: {#DB.NAME}'
+              valuemap:
+                name: 'Exchange Server 2016 Database Mounted State'
+            -
+              name: '{#DB.NAME} page faults per second'
+              key: 'perf_counter_en["\MSExchange Database(Information Store - {#DB.NAME})\Database Page Fault Stalls/sec",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: |
+                Indicates the rate of page faults that can't be serviced because there are no pages available for allocation from the database cache.
+                If this counter is above 0, it's an indication that the MSExchange Database\I/O Database Writes (Attached) Average Latency is too high.
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{max(5m)}>0'
+                  name: '{#DB.NAME} page faults too high'
+                  priority: AVERAGE
+                  description: |
+                    Too much page faults stalls for database "{#DB.NAME}".
+                    This counter should be 0 on production servers.
+            -
+              name: '{#DB.NAME} log record stalls'
+              key: 'perf_counter_en["\MSExchange Database(Information Store - {#DB.NAME})\Log Record Stalls/sec",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: |
+                Indicates the number of log records that can't be added to the log buffers per second because the log buffers are full.
+                
+                The average value should be below 10 per second.
+                Spikes (maximum values) shouldn't be higher than 100 per second.
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{avg(10m)}>100'
+                  name: '{#DB.NAME} log records stalls too high: {ITEM.VALUE}'
+                  priority: AVERAGE
+                  description: |
+                    Stalled log records too high for database "{#DB.NAME}".
+                    The average value should be less than 10 threads waiting.
+            -
+              name: '{#DB.NAME} log threads waiting'
+              key: 'perf_counter_en["\MSExchange Database(Information Store - {#DB.NAME})\Log Threads Waiting",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: |
+                Indicates the number of threads waiting to complete an update of the database by writing their data to the log.
+                
+                The average value should be less than 10 threads waiting.
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{min(10m)}>10'
+                  name: '{#DB.NAME} log threads waiting too high: {ITEM.VALUE}'
+                  priority: WARNING
+                  description: |
+                    Log threads waiing count too high for database "{#DB.NAME}".
+                    The average value should be less than 10 threads waiting.
+            -
+              name: '{#DB.NAME} active database read operations per second'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Database Reads (Attached)/sec",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              description: 'Shows the number of database read operations.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+            -
+              name: '{#DB.NAME} active database read operations latency'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Database Reads (Attached) Average Latency",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              units: ms
+              description: 'Shows the average length of time, in milliseconds (ms), per database read operation. Should be less than 20ms on average.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{min(10m)}>20'
+                  name: '{#DB.NAME} read time latency too high: {ITEM.VALUE}'
+                  priority: WARNING
+                  description: '"{#DB.NAME}" average read time latency too high for 5 min.'
+            -
+              name: '{#DB.NAME} passive database read operation latency'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Database Reads (Recovery) Average Latency",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              units: ms
+              description: 'Shows the average length of time, in ms, per passive database read operation. Should be less than 200ms on average.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+            -
+              name: '{#DB.NAME} active database writes operations per second'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Database Writes (Attached)/sec",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              description: 'Number of database write operations per second for each attached database instance.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+            -
+              name: '{#DB.NAME} active database writes operations latency'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Database Writes (Attached) Average Latency",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              units: ms
+              description: 'Shows the average length of time, in ms, per database write operation. Should be less than 50ms on average.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{avg(10m)}>50'
+                  name: '{#DB.NAME} write time latency too high: {ITEM.VALUE}'
+                  priority: WARNING
+                  description: |
+                    "{#DB.NAME}" average write latency too high.
+                    In general, this latency should be less than the "MSExchange Database\I/O Database Reads (Attached) Average Latency" when battery-backed write caching is utilized.
+            -
+              name: '{#DB.NAME} passive database writes operation latency'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Database Writes (Recovery) Average Latency",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              units: ms
+              description: 'Shows the average length of time, in ms, per passive database write operation. Should be less than the read latency for the same instance, as measured by the MSExchange Database ==> Instances(\*)\I/O Database Reads (Recovery) Average Latency counter.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+            -
+              name: '{#DB.NAME} log writes operations per second'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Log Writes/sec",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              description: 'Shows the number of log writes per second.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+            -
+              name: '{#DB.NAME} log writes operations latency'
+              key: 'perf_counter_en["\MSExchange Database ==> Instances(Information Store - {#DB.NAME}/_Total)\I/O Log Writes Average Latency",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              units: ms
+              description: |
+                Shows the average length of time, in ms, per Log write operation. Should be less than 10ms on average.
+                
+                If this counter is greater than 10, it's an indication that the MSExchange Database\I/O Database Writes (Attached) Average Latency is too high.
+              application_prototypes:
+                -
+                  name: 'MSExchange Database Instances: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{min(10m)}>10'
+                  name: '{#DB.NAME} log write latency too high: {ITEM.VALUE}'
+                  priority: WARNING
+                  description: 'Log writes latency too high for database "{#DB.NAME}".'
+            -
+              name: '{#DB.NAME} active mailboxes count'
+              key: 'perf_counter_en["\MSExchangeIS Store({#DB.LCNAME})\Active mailboxes"]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: 'Database {#DB.NAME} number of active mailboxes.'
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+            -
+              name: '{#DB.NAME} database state'
+              key: 'perf_counter_en["\MSExchangeIS Store({#DB.LCNAME})\Database State"]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: 'Database {#DB.NAME} state'
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+              valuemap:
+                name: 'Exchange Server 2016 Database State'
+              trigger_prototypes:
+                -
+                  expression: '{last()}=0'
+                  name: '{#DB.NAME} not mounted'
+                  priority: HIGH
+            -
+              name: '{#DB.NAME} RPC requests latency'
+              key: 'perf_counter_en["\MSExchangeIS Store({#DB.LCNAME})\RPC Average Latency",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              units: ms
+              description: 'RPC Latency average (msec) is the average latency in milliseconds of RPC requests per database. Average is calculated over all RPCs since exrpc32 was loaded. Should be less than 50ms at all times, with spikes less than 100ms.'
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{avg(10m)}>100'
+                  name: '{#DB.NAME} RPC Requests latancy too high: {ITEM.VALUE}'
+                  priority: WARNING
+                  description: 'RPC Requests latancy too high for database "{#DB.NAME}".'
+            -
+              name: '{#DB.NAME} RPC requests per second'
+              key: 'perf_counter_en["\MSExchangeIS Store({#DB.LCNAME})\RPC Operations/sec",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              description: 'Shows the number of RPC operations per second for each database instance.'
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+            -
+              name: '{#DB.NAME} RPC requests total'
+              key: 'perf_counter_en["\MSExchangeIS Store({#DB.LCNAME})\RPC requests",{$PERFCOUNTER_PERIOD}]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '{$TRENDS}'
+              value_type: FLOAT
+              description: |
+                Indicates the overall RPC requests currently executing within the information store process.
+                Should be below 70 at all times.
+              application_prototypes:
+                -
+                  name: 'MSExchangeIS: {#DB.NAME}'
+              trigger_prototypes:
+                -
+                  expression: '{avg(10m)}>70'
+                  name: '{#DB.NAME} RPC Requests too high: {ITEM.VALUE}'
+                  priority: WARNING
+                  description: 'RPC Requests count for database "{#DB.NAME}" too high.'
+            -
+              name: '{#DB.NAME} content index state'
+              key: 'perf_counter_en["\MSExchange Search Indexes({#DB.LCNAME})\Indexing Status"]'
+              delay: 30s
+              history: '{$HISTORY}'
+              trends: '0'
+              value_type: FLOAT
+              description: 'Database {#DB.NAME} content index state.'
+              application_prototypes:
+                -
+                  name: 'MSExchange Search Indexes: {#DB.NAME}'
+              valuemap:
+                name: 'Exchange Server 2016 Database Content Index States'
+            -
+              name: '{#DB.NAME} edb file size'
+              key: 'vfs.file.size[{#DB.EDBPATH}]'
+              delay: 5m
+              history: '{$HISTORY}'
+              units: B
+              description: 'Database {#DB.NAME} edb file size.'
+              applications:
+                -
+                  name: 'Exchange EDB Files'
+              preprocessing:
+                -
+                  type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 10m
+      tags:
+        -
+          tag: app
+          value: exchange
+      macros:
+        -
+          macro: '{$DB_READ_LAT}'
+          value: '100'
+        -
+          macro: '{$DB_WRITE_LAT}'
+          value: '1000'
+        -
+          macro: '{$EXCHANGE.VERSION}'
+          value: '2019'
+        -
+          macro: '{$HISTORY}'
+          value: 14d
+        -
+          macro: '{$PERFCOUNTER_PERIOD}'
+          value: '30'
+        -
+          macro: '{$TRENDS}'
+          value: 180d
+  value_maps:
+    -
+      name: 'Exchange Server 2016 Database Content Index States'
+      mappings:
+        -
+          value: '0'
+          newvalue: Unknown
+        -
+          value: '1'
+          newvalue: Healthy
+        -
+          value: '2'
+          newvalue: Crawling
+        -
+          value: '3'
+          newvalue: Failed
+        -
+          value: '4'
+          newvalue: Seeding
+        -
+          value: '5'
+          newvalue: FailedAndSuspended
+        -
+          value: '6'
+          newvalue: Suspended
+        -
+          value: '7'
+          newvalue: Disabled
+        -
+          value: '8'
+          newvalue: AutoSuspended
+        -
+          value: '9'
+          newvalue: HealthyAndUpgrading
+        -
+          value: '10'
+          newvalue: DiskUnavailable
+    -
+      name: 'Exchange Server 2016 Database Copy State'
+      mappings:
+        -
+          value: '0'
+          newvalue: Passive
+        -
+          value: '1'
+          newvalue: Active
+    -
+      name: 'Exchange Server 2016 Database Mounted State'
+      mappings:
+        -
+          value: '0'
+          newvalue: 'Not mounted'
+        -
+          value: '1'
+          newvalue: Mounted
+    -
+      name: 'Exchange Server 2016 Database State'
+      mappings:
+        -
+          value: '0'
+          newvalue: Dismounted
+        -
+          value: '1'
+          newvalue: Mounted
+        -
+          value: '2'
+          newvalue: Healthy
