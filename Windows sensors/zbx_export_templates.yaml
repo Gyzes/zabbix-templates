@@ -1,0 +1,255 @@
+zabbix_export:
+  version: '5.4'
+  date: '2022-01-20T06:21:09Z'
+  groups:
+    -
+      uuid: e77332500d8c487fbb589fbd5048fd1a
+      name: Windows
+  templates:
+    -
+      uuid: da76ba5c824c40cabe6e2d97c2fd206c
+      template: 'Windows sensors'
+      name: 'Windows sensors'
+      groups:
+        -
+          name: Windows
+      items:
+        -
+          uuid: 7931c13cef24497f919c132d93efafed
+          name: 'Hardware get'
+          key: 'hardware.get[{$ZABBIX_HOST},{$ZABBIX_PORT}]'
+          history: '0'
+          trends: '0'
+          value_type: TEXT
+      discovery_rules:
+        -
+          uuid: 33c2f47cb87548ceac2f2f125911cf75
+          name: 'Clock sensors'
+          type: TRAP
+          key: hardware.sensors.clock
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: c6e030e8083749f590c188e6f6cfe096
+              name: '{#HWNAME} clock sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.clock[{#IDENTIFIER}]'
+              delay: '0'
+              units: Hz
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '1000000'
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: 9c4574d131fc4cc585a0973dd05e26c7
+          name: 'FanControl sensors'
+          type: TRAP
+          key: hardware.sensors.control
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 304b82c2429b4103924ab6eb6dc851fa
+              name: '{#HWNAME} fan control sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.control[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: '%'
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: 15f5030d08ff460bad783cd454b4bea9
+          name: 'Data sensors'
+          type: TRAP
+          key: hardware.sensors.data
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 7c9e723f4e684505901d9e3b48069331
+              name: '{#HWNAME} data sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.data[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: G
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: 204982716875425a99eb8d7c2ec2c592
+          name: 'Fan sensors'
+          type: TRAP
+          key: hardware.sensors.fan
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 83ef8d85fbaa422b9e96a801912edb5c
+              name: '{#HWNAME} fan sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.fan[{#IDENTIFIER}]'
+              delay: '0'
+              units: RPM
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: 65d45332200f47d6ae3fbba78b80c39e
+          name: 'Load sensors'
+          type: TRAP
+          key: hardware.sensors.load
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: d8520d5cc00c44ffb2942d0cd4ec42ab
+              name: '{#HWNAME} load sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.load[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: '%'
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: 7dc61c7cfd4c453c93e2d44a77670c8d
+          name: 'Power sensors'
+          type: TRAP
+          key: hardware.sensors.power
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 0c56576e34654b9f8e13455a8bb78264
+              name: '{#HWNAME} power sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.power[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: W
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: 2bf27b87e76c40c8bcc368241e213e1e
+          name: 'SmallData sensors'
+          type: TRAP
+          key: hardware.sensors.smalldata
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 17b0892ab319401692ea702effe67efb
+              name: '{#HWNAME} smalldata sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.smalldata[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: M
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: ec7ee7326b15462f9578bbb82c1f179a
+          name: 'Temperature sensors'
+          type: TRAP
+          key: hardware.sensors.temperature
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: b3aba0db5159454a8f09b7205967ecd7
+              name: '{#HWNAME} temperature sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.temperature[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: C
+              trigger_prototypes:
+                -
+                  uuid: d12438cb1a394c2d946eb8824686b0c9
+                  expression: 'last(/Windows sensors/hardware.sensor.temperature[{#IDENTIFIER}])>{$TEMP_HIGH}'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'last(/Windows sensors/hardware.sensor.temperature[{#IDENTIFIER}])>({$TEMP_HIGH}-5)'
+                  name: 'Temperature {#HWNAME} on {#NAME} high (more than {$TEMP_HIGH})'
+                  priority: HIGH
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: c2c66e999aa34304b18f987b3d577b81
+          name: 'Throughput sensors'
+          type: TRAP
+          key: hardware.sensors.throughput
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 4ba0d73aed8b4092aad08457337b5a7f
+              name: '{#HWNAME} throughput sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.throughput[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: M/s
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+        -
+          uuid: f8f6fea8c5a044129e2c129351027e6a
+          name: 'Voltage sensors'
+          type: TRAP
+          key: hardware.sensors.voltage
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: 394e5e9d493f48b08ea7faf813c1d581
+              name: '{#HWNAME} voltage sensor {#NAME}'
+              type: TRAP
+              key: 'hardware.sensor.voltage[{#IDENTIFIER}]'
+              delay: '0'
+              value_type: FLOAT
+              units: V
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - _
+                - ' '
+      macros:
+        -
+          macro: '{$TEMP_HIGH}'
+          value: '70'
+        -
+          macro: '{$ZABBIX_HOST}'
+          value: zabbix
+        -
+          macro: '{$ZABBIX_PORT}'
+          value: '10051'
