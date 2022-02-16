@@ -250,7 +250,7 @@ zabbix_export:
           value: '70'
         -
           macro: '{$ZABBIX_HOST}'
-          value: zabbix.local
+          value: zabbix
         -
           macro: '{$ZABBIX_PORT}'
-          value: '31051'
+          value: '10051'
