@@ -1,6 +1,6 @@
 zabbix_export:
   version: '5.4'
-  date: '2022-01-20T06:21:09Z'
+  date: '2022-02-16T05:33:21Z'
   groups:
     -
       uuid: e77332500d8c487fbb589fbd5048fd1a
@@ -102,6 +102,7 @@ zabbix_export:
               type: TRAP
               key: 'hardware.sensor.fan[{#IDENTIFIER}]'
               delay: '0'
+              value_type: FLOAT
               units: RPM
           preprocessing:
             -
@@ -249,7 +250,7 @@ zabbix_export:
           value: '70'
         -
           macro: '{$ZABBIX_HOST}'
-          value: zabbix
+          value: zabbix.local
         -
           macro: '{$ZABBIX_PORT}'
-          value: '10051'
+          value: '31051'
